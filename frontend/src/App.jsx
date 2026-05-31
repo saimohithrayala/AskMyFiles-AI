@@ -30,7 +30,7 @@ function App() {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch('https://askmyfiles-ai.onrender.com/upload', {
+      const response = await fetch('http://localhost:8000/upload', {
         method: 'POST',
         body: formData,
       });
@@ -70,7 +70,7 @@ function App() {
     setIsThinking(true);
 
     try {
-      const response = await fetch('https://askmyfiles-ai.onrender.com/chat', {
+      const response = await fetch('http://localhost:8000/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: userQuery }),
