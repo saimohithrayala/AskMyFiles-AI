@@ -149,8 +149,8 @@ function App() {
         </div>
 
         <div className="status-footer">
-          <div>NODE: LOCAL_HOST</div>
-          <div>PORT: 8000</div>
+          <div>NODE:CLOUD_SERVER</div>
+          <div>PORT:7860</div>
         </div>
       </div>
 
