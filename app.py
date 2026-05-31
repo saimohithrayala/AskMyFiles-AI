@@ -16,10 +16,9 @@ load_dotenv()
 
 app = FastAPI()
 
-# Enable CORS so your React app can talk to the backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, specify your React app's URL
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,11 +28,6 @@ TEMP_DIR = "temp_docs"
 CHROMA_DIR = "chroma_db"
 os.makedirs(TEMP_DIR, exist_ok=True)
 
-# Initialize core models
-embedding_model = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", temperature=1.0)
-
-# Setup prompt template
 prompt_template = ChatPromptTemplate.from_messages([
     ("system", 'You are a helpful AI assistant.\n\nUse ONLY the provided context to answer the question.\n\nIf the answer is not present in the context,\nsay: "I could not find the answer in the document."'),
     ("human", "Context:\n{context}\n\nQuestion:\n{question}")
@@ -44,24 +38,22 @@ class ChatRequest(BaseModel):
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
+    embedding_model = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
     if not file.filename.endswith('.pdf'):
         raise HTTPException(status_code=400, detail="Only PDF files are supported.")
     
-    # 1. Save uploaded file temporarily
     file_path = os.path.join(TEMP_DIR, file.filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
     try:
-        # 2. Process documents
+
         loader = PyPDFLoader(file_path)
         docs = loader.load()
         
         splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         chunks = splitter.split_documents(docs)
         
-        # 3. Add to vector store (overwriting or appending depending on your preference)
-        # Using .from_documents initializes or updates the persist_directory
         Chroma.from_documents(
             documents=chunks,
             embedding=embedding_model,
@@ -73,12 +65,15 @@ async def upload_file(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
-        # Clean up the temp file
+
         if os.path.exists(file_path):
             os.remove(file_path)
 
 @app.post("/chat")
 async def chat(payload: ChatRequest):
+
+    embedding_model = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
+    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", temperature=1.0)
     # Check if DB exists
     if not os.path.exists(CHROMA_DIR):
         raise HTTPException(status_code=400, detail="Please upload a document first to initialize the database.")
