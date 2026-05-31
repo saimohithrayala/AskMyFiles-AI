@@ -6,8 +6,6 @@ from pydantic import BaseModel
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import Chroma 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
@@ -38,6 +36,9 @@ class ChatRequest(BaseModel):
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
+    from langchain_google_genai import GoogleGenerativeAIEmbeddings
+    from langchain_community.vectorstores import Chroma
+
     embedding_model = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
     if not file.filename.endswith('.pdf'):
         raise HTTPException(status_code=400, detail="Only PDF files are supported.")
@@ -71,10 +72,12 @@ async def upload_file(file: UploadFile = File(...)):
 
 @app.post("/chat")
 async def chat(payload: ChatRequest):
+    from langchain_google_genai import GoogleGenerativeAIEmbeddings
+    from langchain_community.vectorstores import Chroma
 
     embedding_model = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
     llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", temperature=1.0)
-    # Check if DB exists
+    
     if not os.path.exists(CHROMA_DIR):
         raise HTTPException(status_code=400, detail="Please upload a document first to initialize the database.")
         
