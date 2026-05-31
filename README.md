@@ -1,4 +1,4 @@
-                                                                           ###----------AskMyFiles-AI----------###
+ ###----------AskMyFiles-AI----------###
 
 An advanced, full-stack Retrieval-Augmented Generation (RAG) application that allows users to upload documents and have intelligent, context-aware conversations about their contents using AI.
 
