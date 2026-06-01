@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Upload, Terminal, Send, Cpu, AlertTriangle, FileText, Trash2 } from 'lucide-react';
 
+const UPLOAD_URL = 'https://rayalasaimohith-askmyfiles-backend.hf.space/upload';
+const CHAT_URL = 'https://rayalasaimohith-askmyfiles-backend.hf.space/chat';
+
 function App() {
-  // Messages now starts empty so we can cleanly control the splash screen behavior
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [file, setFile] = useState(null);
@@ -30,7 +32,7 @@ function App() {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch(UPLOAD_URL,'https://rayalasaimohith-askmyfiles-backend.hf.space/upload', {
+      const response = await fetch(UPLOAD_URL, {
         method: 'POST',
         body: formData,
       });
@@ -70,7 +72,7 @@ function App() {
     setIsThinking(true);
 
     try {
-      const response = await fetch(CHAT_URL,'https://rayalasaimohith-askmyfiles-backend.hf.space/chat', {
+      const response = await fetch(CHAT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: userQuery }),
@@ -149,15 +151,13 @@ function App() {
         </div>
 
         <div className="status-footer">
-          <div>NODE:CLOUD_SERVER</div>
-          <div>PORT:7860</div>
+          <div>NODE: CLOUD_SERVER</div>
+          <div>PORT: 7860</div>
         </div>
       </div>
 
       {/* CHAT DISPLAY PANEL */}
       <div className="terminal-panel">
-        
-        {/* Topbar (Clean layout with just custom window dots) */}
         <div className="terminal-header" style={{ justifyContent: 'flex-end' }}>
           <div style={{ display: 'flex', gap: '6px' }}>
             <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#27272a' }}></div>
@@ -166,10 +166,7 @@ function App() {
           </div>
         </div>
 
-        {/* Dynamic Log Feed / Center Greeting */}
         <div className="terminal-messages" style={{ position: 'relative' }}>
-          
-          {/* Large Center Splash Screen - Visible only when there are no query messages */}
           {messages.length === 0 && (
             <div style={{
               position: 'absolute',
@@ -191,11 +188,9 @@ function App() {
             </div>
           )}
 
-          {/* Render Active Conversation Logs */}
           {messages.map((msg, index) => (
             <div key={index} className={`message-wrapper ${msg.role}`}>
               <div className="message-box">
-                {/* ↳ OPERATOR_QUERY stays for the user; the matrix header tag is gone */}
                 {msg.role === 'user' && <div className="message-label">↳ OPERATOR_QUERY</div>}
                 <div style={{ whiteSpace: 'pre-wrap' }}>{msg.text}</div>
               </div>
@@ -213,7 +208,6 @@ function App() {
           <div ref={chatEndRef} />
         </div>
 
-        {/* Input Interface */}
         <form onSubmit={handleSendMessage} className="input-form">
           <span className="input-arrow">&gt;</span>
           <input
