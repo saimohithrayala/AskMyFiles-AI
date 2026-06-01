@@ -22,8 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-TEMP_DIR = "temp_docs"
-CHROMA_DIR = "chroma_db"
+TEMP_DIR = "/tmp/temp_docs"
+CHROMA_DIR = "/tmp/chroma_db"
 os.makedirs(TEMP_DIR, exist_ok=True)
 
 prompt_template = ChatPromptTemplate.from_messages([
@@ -48,7 +48,6 @@ async def upload_file(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
     
     try:
-
         loader = PyPDFLoader(file_path)
         docs = loader.load()
         
@@ -66,7 +65,6 @@ async def upload_file(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
-
         if os.path.exists(file_path):
             os.remove(file_path)
 
@@ -76,7 +74,8 @@ async def chat(payload: ChatRequest):
     from langchain_community.vectorstores import Chroma
 
     embedding_model = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
-    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", temperature=1.0)
+    
+    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", temperature=0.7)
     
     if not os.path.exists(CHROMA_DIR):
         raise HTTPException(status_code=400, detail="Please upload a document first to initialize the database.")
