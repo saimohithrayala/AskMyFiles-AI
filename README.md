@@ -23,4 +23,4 @@ This project is built using a modern decoupled architecture to handle heavy AI c
 *   **Orchestration:** LangChain / Core RAG pipeline
 *   **Vector Database:** ChromaDB (for local vector management)
 *   **LLM Provider:** Google Generative AI (Gemini API)
-*   **Hosting:** Render 
+*   **Hosting:** Hugging Face
